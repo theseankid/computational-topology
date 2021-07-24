@@ -24,6 +24,6 @@ def SVD_ellipsoid_distances(data):
         a1 = h.T@Qs[i]@h
         a2 = h.T@Qs[j]@h
 
-        D[i,j] = 2*dists[2,7]/(np.sqrt(a1)+np.sqrt(a2))
+        D[i,j] = 2*dists[i,j]/(np.sqrt(a1)+np.sqrt(a2))
 
     return D + D.T
