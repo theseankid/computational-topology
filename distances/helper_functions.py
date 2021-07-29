@@ -3,6 +3,8 @@ from itertools import combinations
 
 def euclidean_distance_matrix(data, normalize = False, symmetric = True):
     """
+    index i, j of D[i,j] is the Euclidean distance of row i and j of the data matrix
+
     data : a should be shape n by d array where n is the number of observations
 
     normalize : True puts distances to [0,1] range

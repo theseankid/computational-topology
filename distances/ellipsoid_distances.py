@@ -17,6 +17,7 @@ def ellipsoid_distances(data, f, variables, sigma):
 
     s = np.ones(d)
     s[0] = sigma
+
     # creates oblate spheroid mappings at each point
     Qs = [V.T*s@V for V in Vs]
 
@@ -41,6 +42,9 @@ def SVD_ellipsoid_distances(data):
 
     n, d = data.shape
     assert d > 1, 'need to have more than one dimension for SVD ellipsoids'
+
+    nbrs = NearestNeighbors(n_neighbors=d+1).fit(data)
+    distances, indices = nbrs.kneighbors(data)
 
     Ms = [data[idx] for idx in indices]
     # in U, Sigma, V.T = SVD(M) get V.T
