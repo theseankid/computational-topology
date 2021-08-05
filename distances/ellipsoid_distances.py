@@ -1,16 +1,43 @@
 import numpy as np
 from itertools import combinations
 from sklearn.neighbors import NearestNeighbors
-from helper_functions import euclidean_distance_matrix
+from helper_functions import euclidean_distance_matrix, jacobian_rotation_matricies, svd_rotation_matricies
 from sympy import lambdify
 from sympy import Matrix
+
+
+def euclidean_distance_matrix(data, normalize = False, symmetric = True):
+    """
+    index i, j of D[i,j] is the Euclidean distance of row i and j of the data matrix
+
+    data : a should be shape n by d array where n is the number of observations
+
+    normalize : True puts distances to [0,1] range
+
+    symmetric : False returns an upper triangular matrix, useful for sparse matrix representation and histograms
+    """
+
+    n = data.shape[0]
+    D = np.zeros([n,n])
+    
+    for i, j in combinations(np.arange(n),2):
+        D[i,j] = np.linalg.norm(data[i] - data[j])
+
+    if symmetric:
+        D = D + D.T
+
+    if normalize:
+        return D/D.max()
+
+    else:
+        return D
 
 
 def jacobian_ellipsoid_distances(data, f, variables, sigma):
     '''
     f : function for finding tangent spaces of spheroids
     
-    variables: set of variables of sympy.Symbol type
+    variables: a list of variables of sympy.Symbol type
 
     sigma : sets ratio for ellipsoid distances
     '''
@@ -21,16 +48,14 @@ def jacobian_ellipsoid_distances(data, f, variables, sigma):
         assert type(var) == type(sympy.core.symbol.Symbol), 'variable {} must be of sympy.Symbol type'.format(str(var))
 
     assert 0 < sigma <=1, 'sigma must be in (0, 1]'
+    assert type(data) == np.ndarray, ' must be numpy array (matrix)'
 
     dists = euclidean_distance_matrix(data, normalize=True)
 
     if sigma == 1:
         return dists
 
-    J = lambdify(variables, Matrix([f]).jacobian(variables))
-    
-    # Vs in one step
-    Vs = [np.linalg.svd(Jf_lam(*row), full_matrices=True)[-1] for row in data]
+    Vs = jacobian_rotation_matricies(data, f, variables)
 
     s = np.ones(d)
     s[0] = sigma
@@ -72,15 +97,8 @@ def svd_ellipsoid_distances(data, sigma=1.0, nnbrs=1, fixed=True):
     if sigma == 1:
         return dists 
 
-    nbrs = NearestNeighbors(n_neighbors=d+nnbrs).fit(data)
-    distances, indices = nbrs.kneighbors(data)
-
-    Ms = [data[idx] for idx in indices]
-    # in U, Sigma, V.T = SVD(M) get V.T
-
-    # creates oblate spheroid mappings at each point
     if fixed:
-        Vs = [np.linalg.svd(M, full_matrices=True)[-1] for M in Ms]
+        Vs, Sigmas = svd_rotation_matrices(data, sigma, nnbrs, fixed)
 
         s = np.ones(d)
         s[-1] = sigma
@@ -88,15 +106,9 @@ def svd_ellipsoid_distances(data, sigma=1.0, nnbrs=1, fixed=True):
         Qs = [V.T*s@V for V in Vs]
 
     else:
-        Sigmas, Vs = zip(*[np.linalg.svd(M, full_matrices=True)[-2:] for M in Ms])
+        Vs, Sigmas = svd_rotation_matrices(data, sigma, nnbrs, fixed)
 
-        Ss = []
-        for ss in Sigmas:
-            s_ones = np.ones(d)
-            s_ones[-1] = ss[-1]/ss.sum()
-            Ss.append(s_ones)
-
-        Qs = [V.T*s@V for s, V in zip(Ss, Vs)]
+        Qs = [V.T*s@V for s, V in zip(Sigmas, Vs)]
 
     D = np.zeros([n,n])
 

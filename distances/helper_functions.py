@@ -1,5 +1,8 @@
 import numpy as np
 from itertools import combinations
+from sklearn.neighbors import NearestNeighbors
+from sympy import lambdify
+from sympy import Matrix
 
 def euclidean_distance_matrix(data, normalize = False, symmetric = True):
     """
@@ -26,3 +29,45 @@ def euclidean_distance_matrix(data, normalize = False, symmetric = True):
 
     else:
         return D
+
+
+def jacobian_rotation_matricies(data, f, variables):
+    '''
+    f : function for finding tangent spaces of spheroids
+    
+    variables: a list of variables of sympy.Symbol type
+    '''
+
+    Jf = lambdify(variables, Matrix([f]).jacobian(variables))
+
+    # Vs in one step
+    Vs = [np.linalg.svd(Jf(*row), full_matrices=True)[-1] for row in data]
+    
+    return Vs
+
+
+def svd_rotation_matricies(data, sigma=1.0, nnbrs=1, fixed=True):
+
+    n, d = data.shape
+
+    nbrs = NearestNeighbors(n_neighbors=d+nnbrs).fit(data)
+    distances, indices = nbrs.kneighbors(data)
+
+    Ms = [data[idx] for idx in indices]
+
+    # creates oblate spheroid mappings at each point
+    if fixed:
+        Vs = [np.linalg.svd(M, full_matrices=True)[-1] for M in Ms]
+
+        return Vs, None
+
+    else:
+        Sigs, Vs = zip(*[np.linalg.svd(M, full_matrices=True)[-2:] for M in Ms])
+
+        Sigmas = []
+        for sigs in Sigs:
+            s_ones = np.ones(d)
+            s_ones[-1] = sigs[-1]/sigs.sum()
+            Sigmas.append(s_ones)
+
+        return Vs, Sigmas
