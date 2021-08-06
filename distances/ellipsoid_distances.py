@@ -1,7 +1,8 @@
 import numpy as np
 from itertools import combinations
 from sklearn.neighbors import NearestNeighbors
-from helper_functions import euclidean_distance_matrix, jacobian_rotation_matricies, svd_rotation_matricies
+from helper_functions import euclidean_distance_matrix, jacobian_rotation_matrices, svd_rotation_matrices
+import sympy
 from sympy import lambdify
 from sympy import Matrix
 
@@ -45,7 +46,7 @@ def jacobian_ellipsoid_distances(data, f, variables, sigma):
     n, d = data.shape
 
     for var in variables:
-        assert type(var) == type(sympy.core.symbol.Symbol), 'variable {} must be of sympy.Symbol type'.format(str(var))
+        assert type(var) == type(sympy.Symbol('foo')), 'variable {} must be of sympy.Symbol type'.format(str(var))
 
     assert 0 < sigma <=1, 'sigma must be in (0, 1]'
     assert type(data) == np.ndarray, ' must be numpy array (matrix)'
@@ -55,7 +56,7 @@ def jacobian_ellipsoid_distances(data, f, variables, sigma):
     if sigma == 1:
         return dists
 
-    Vs = jacobian_rotation_matricies(data, f, variables)
+    Vs = jacobian_rotation_matrices(data, f, variables)
 
     s = np.ones(d)
     s[0] = sigma
@@ -98,7 +99,7 @@ def svd_ellipsoid_distances(data, sigma=1.0, nnbrs=1, fixed=True):
         return dists 
 
     if fixed:
-        Vs, Sigmas = svd_rotation_matrices(data, sigma, nnbrs, fixed)
+        Vs, Sigmas = svd_rotation_matrices(data, nnbrs, fixed)
 
         s = np.ones(d)
         s[-1] = sigma
@@ -106,7 +107,7 @@ def svd_ellipsoid_distances(data, sigma=1.0, nnbrs=1, fixed=True):
         Qs = [V.T*s@V for V in Vs]
 
     else:
-        Vs, Sigmas = svd_rotation_matrices(data, sigma, nnbrs, fixed)
+        Vs, Sigmas = svd_rotation_matrices(data, nnbrs, fixed)
 
         Qs = [V.T*s@V for s, V in zip(Sigmas, Vs)]
 

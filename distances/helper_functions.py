@@ -31,7 +31,7 @@ def euclidean_distance_matrix(data, normalize = False, symmetric = True):
         return D
 
 
-def jacobian_rotation_matricies(data, f, variables):
+def jacobian_rotation_matrices(data, f, variables):
     '''
     f : function for finding tangent spaces of spheroids
     
@@ -46,7 +46,7 @@ def jacobian_rotation_matricies(data, f, variables):
     return Vs
 
 
-def svd_rotation_matricies(data, sigma=1.0, nnbrs=1, fixed=True):
+def svd_rotation_matrices(data, nnbrs=1, fixed=True):
 
     n, d = data.shape
 
