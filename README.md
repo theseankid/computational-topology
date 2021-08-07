@@ -11,6 +11,6 @@ Linear regression gives nearly the same result but for two very different datase
 
 ## Filtration Examples
 
-<img src="images/figures_01-12.pdf" alt="Comparing Filtrations: Standard (Left), Jacobian Ellipsoid (Middle), and SVD Ellipsoid (Right)" />
+<img src="images/figures_01-12.png" alt="Comparing Filtrations: Standard (Left), Jacobian Ellipsoid (Middle), and SVD Ellipsoid (Right)" />
 
 Compare the persistence of Homology groups for each type of filtration.
