@@ -3,7 +3,7 @@
 This collection of scripts and notebooks written in `python` are related to computing and visualizing Persistent Homology.
 
 - the `functions` folder contains `distances` which allows you to calculate distances based on various metric and embeddings.
-- `examples` are python notebooks with visualizations both interactive (using the `plotly`) and static (using `matplotlib`) to interact with your data
+- `examples` are python notebooks with computed examples as wlel as visualizations that are both interactive (using the `plotly`) and static (using `matplotlib`) to explore your data
 - the `presentation` folder contains an extended write up of how these ideas work as well as references
 
 installation
