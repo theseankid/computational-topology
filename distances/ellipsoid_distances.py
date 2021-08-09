@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import combinations
 from sklearn.neighbors import NearestNeighbors
-from helper_functions import euclidean_distance_matrix, jacobian_rotation_matrices, svd_rotation_matrices
+from .helper_functions import euclidean_distance_matrix, jacobian_rotation_matrices, svd_rotation_matrices
 import sympy
 from sympy import lambdify
 from sympy import Matrix

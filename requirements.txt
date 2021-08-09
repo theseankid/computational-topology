@@ -1,0 +1,9 @@
+pandas
+numpy
+cython
+sympy
+scipy
+scikit-lean
+scikit-tda
+matplotlib
+plotly

@@ -1,10 +1,7 @@
 import numpy as np
 from itertools import combinations
 from sklearn.neighbors import NearestNeighbors
-from helper_functions import euclidean_distance_matrix, jacobian_rotation_matrices, svd_rotation_matrices
-import sympy
-from sympy import lambdify
-from sympy import Matrix
+from .helper_functions import euclidean_distance_matrix, jacobian_rotation_matrices, svd_rotation_matrices
 
 
 def euclidean_distance_matrix(data, normalize = False, symmetric = True):
