@@ -1,9 +1,0 @@
-venv
-.pytest_cache
-__pycache__
-cechmate.egg-info
-.ipynb_checkpoints
-.DS_Store
-sandbox
-theory
-stubs
